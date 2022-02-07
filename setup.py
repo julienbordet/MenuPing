@@ -7,6 +7,7 @@ OPTIONS = {
     'iconfile': 'icon.icns',
     'plist': {
         'CFBundleShortVersionString': '0.2.0',
+        'CFBundleIdentifier': 'info.bordet.menuping',
         'LSUIElement': True,
     },
     'packages': ['rumps', 'ping3'],
