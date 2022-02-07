@@ -13,7 +13,7 @@ Written in Python, thanks to [rumps](https://github.com/jaredks/rumps) and py2ap
 
 Very basic :
 
-* Pings every second www.google.com
+* Pings every second www.google.com, this address is configurable
 * Can be made persistant, that is launched at session startup
 
 ## How to install ?
@@ -23,4 +23,4 @@ Have a look at binary and sources available on [the release page](https://github
 
 ## What is the current version
 
-The current version is 0.0.1
+The current version is 0.1
