@@ -7,7 +7,7 @@ import os
 from os.path import expanduser
 import shutil
 
-rumps.debug_mode(True)
+#rumps.debug_mode(True)
 
 # Global variables
 
@@ -19,7 +19,6 @@ plist_model_filename = "com.zejames.MenuPing-model.plist"
 plist_filename = "com.zejames.MenuPing.plist"
 
 target_dir = expanduser("~") + '/Library/LaunchAgents'
-
 
 class MenuPingApp(rumps.App):
 
@@ -36,13 +35,16 @@ class MenuPingApp(rumps.App):
 
         self.menu = [
             self.persistant_menu,
-            None
+            None,
+            rumps.MenuItem("About", self.about)
         ]
 
         self.ping_url = "www.google.fr"
 
         self.timer = rumps.Timer(self.on_tick, 1)
         self.timer.start()
+
+        self.icon = 'icon.icns'
 
 
     def manage_persistant(self, sender):
@@ -73,6 +75,20 @@ class MenuPingApp(rumps.App):
     def on_tick(self, sender):
         delay = ping(self.ping_url)
         self.title = "{:.0f} ms".format(delay*1000)
+
+    def about(self, sender):
+        rumps.alert(title='MenuPing',
+                    message="""Version 0.0.1 - FEV 2022 by J. Bordet
+                               https://github.com/julienbordet/MenuPing
+                               
+                               Simple Menubar app to monitor Internet connexion through ping
+                               
+                               Licensed under MIT.
+                               rumps licensed under BSD 3-Clause.
+                               Framework7 icons licensed under MIT
+                               """,
+                    ok=None, cancel=None)
+
 
 if __name__ == "__main__":
     app = MenuPingApp()
