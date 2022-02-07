@@ -84,6 +84,8 @@ class MenuPingApp(rumps.App):
 
             if delay is False:
                 rumps.alert(title='MenuPing', message="Unable to ping the entered address. Please enter new one")
+            else:
+                self.target_url = new_target_url
 
     def on_tick(self, sender):
         delay = ping(self.target_url)
