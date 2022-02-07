@@ -34,18 +34,19 @@ class MenuPingApp(rumps.App):
             self.persistant_menu = rumps.MenuItem(unchecked_make_persistant_menu, self.manage_persistant)
 
         self.menu = [
+            rumps.MenuItem("Change target", self.change_target),
+            None,
             self.persistant_menu,
             None,
             rumps.MenuItem("About", self.about)
         ]
 
-        self.ping_url = "www.google.fr"
+        self.target_url = "www.google.fr"
 
         self.timer = rumps.Timer(self.on_tick, 1)
         self.timer.start()
 
         self.icon = 'icon.icns'
-
 
     def manage_persistant(self, sender):
         fullpath = os.getcwd() + "/../MacOS/" + 'MenuPing'
@@ -72,13 +73,30 @@ class MenuPingApp(rumps.App):
             self.persistant_menu.title = checked_make_persistant_menu
             self.is_persistant = True
 
+    def change_target(self, sender):
+        window = rumps.Window('Expected format : www.something.com', "Enter new address", cancel=True)
+
+        response = window.run()
+
+        if response.clicked == 1:
+            new_target_url = response.text
+            delay = ping(new_target_url)
+
+            if delay is False:
+                rumps.alert(title='MenuPing', message="Unable to ping the entered address. Please enter new one")
+            else:
+                self.target_url = new_target_url
+
     def on_tick(self, sender):
-        delay = ping(self.ping_url)
-        self.title = "{:.0f} ms".format(delay*1000)
+        delay = ping(self.target_url)
+        if delay is False:
+            self.title = "🔴"
+        else:
+            self.title = "{:.0f} ms".format(delay*1000)
 
     def about(self, sender):
         rumps.alert(title='MenuPing',
-                    message="""Version 0.0.1 - FEV 2022 by J. Bordet
+                    message="""Version 0.0.3 - FEV 2022 by J. Bordet
                                https://github.com/julienbordet/MenuPing
                                
                                Simple Menubar app to monitor Internet connexion through ping
