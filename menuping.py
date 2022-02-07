@@ -87,7 +87,10 @@ class MenuPingApp(rumps.App):
 
     def on_tick(self, sender):
         delay = ping(self.target_url)
-        self.title = "{:.0f} ms".format(delay*1000)
+        if delay is False:
+            self.title = "🔴"
+        else:
+            self.title = "{:.0f} ms".format(delay*1000)
 
     def about(self, sender):
         rumps.alert(title='MenuPing',
