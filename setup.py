@@ -1,7 +1,7 @@
 from setuptools import setup
 
 APP = ['menuping.py']
-DATA_FILES = []
+DATA_FILES = [ ('resources') ]
 OPTIONS = {
     'argv_emulation': True,
     'iconfile': 'icon.icns',
