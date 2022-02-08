@@ -96,7 +96,7 @@ class MenuPingApp(rumps.App):
 
     def about(self, sender):
         rumps.alert(title='MenuPing',
-                    message="""Version 0.0.3 - FEV 2022 by J. Bordet
+                    message="""Version 0.2 - FEV 2022 by J. Bordet
                                https://github.com/julienbordet/MenuPing
                                
                                Simple Menubar app to monitor Internet connexion through ping

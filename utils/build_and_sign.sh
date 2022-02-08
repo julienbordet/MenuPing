@@ -1,22 +1,47 @@
 #!/bin/bash
 
+export IDENTITY="Developer ID Application: Julien Bordet (3HLJ4AW5AX)"
+export NAME="MenuPing"
+export YOUR_BUNDLE_ID="info.bordet.menuping"
+
 echo "------------------------------------"
-echo "| Building and codesigning the app |
+echo "| Building and codesigning the app |"
 echo "------------------------------------"
 
 echo "Building through py2app"
-python3 setup.py py2app
+python3 setup.py py2app >/dev/null 2>&1
 
-echo "Signing code"
+echo "Signing librairies code"
 cd dist
-codesign -v --deep --timestamp --entitlements ../resources/entitlements.plist  -o runtime -f -s "Developer ID Application: Julien Bordet (3HLJ4AW5AX)" MenuPing.app
+
+find "${NAME}.app" -iname '*.so' -or -iname '*.dylib' |
+    while read libfile; do
+        codesign --sign "${IDENTITY}" \
+                 --entitlements ../resources/entitlements.plist \
+                 --deep "${libfile}" \
+                 --force \
+                 --timestamp \
+                 --options runtime;
+    done;
+
+echo "Done"
+
+echo "Signing the bundle"
+codesign --sign "${IDENTITY}" \
+         --entitlements ../resources/entitlements.plist \
+         --deep "${NAME}.app" \
+         --force \
+         --timestamp \
+         --options runtime;
+
+cd ..
 
 #
 # Creating archive for
 #
 
 echo "Creating archive"
-ditto -c -k --keepParent "MenuPing.app" MenuPing.zip
+ditto -c -k --keepParent "dist/${NAME}.app" dist/${NAME}.zip
 
 #
 # @keychain:AC_PASSWORD must have been inserte into keychain thanks to
@@ -25,9 +50,9 @@ ditto -c -k --keepParent "MenuPing.app" MenuPing.zip
 # password must have been created in https://appleid.apple.com/account/manage / "App-Specific Passwords"
 #
 
-echo "Sending for notarization"
-xcrun altool --notarize-app -t osx -f MenuPing.zip --primary-bundle-id info.bordet.menuping -u zejames@gmail.com --password "@keychain:AC_PASSWORD"
-cd ..
+echo "Sending for notarization (can be a bit long)"
+xcrun altool --notarize-app -t osx -f dist/${NAME}.zip --primary-bundle-id ${YOUR_BUNDLE_ID} \
+          -u zejames@gmail.com --password "@keychain:AC_PASSWORD"
 
 echo "You should check the notarization result before creating the image for distribution"
 
@@ -40,5 +65,5 @@ echo "You should check the notarization result before creating the image for dis
 #
 #
 # Staple the App
-# xcrun stapler staple "dist/MenuPing.app"
-#
+echo "After notarization, you should staple the app, with"
+echo "  # xcrun stapler staple " "dist/${NAME}.app"
