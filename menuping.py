@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import sys
 
 import rumps
 from ping3 import ping
@@ -74,7 +73,7 @@ class MenuPingApp(rumps.App):
             self.is_persistant = True
 
     def change_target(self, sender):
-        window = rumps.Window('Expected format : www.something.com', "Enter new address", cancel=True)
+        window = rumps.Window('Current target : ' + self.target_url, "Enter new address", cancel=True)
 
         response = window.run()
 
