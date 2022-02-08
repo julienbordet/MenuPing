@@ -6,7 +6,8 @@ OPTIONS = {
     'argv_emulation': True,
     'iconfile': 'icon.icns',
     'plist': {
-        'CFBundleShortVersionString': '0.2.0',
+        'CFBundleShortVersionString': '0.2',
+        'CFBundleIdentifier': 'info.bordet.menuping',
         'LSUIElement': True,
     },
     'packages': ['rumps', 'ping3'],

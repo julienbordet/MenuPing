@@ -69,7 +69,7 @@ class MenuPingApp(rumps.App):
         self.is_persistant = not self.is_persistant
 
     def change_target(self, sender):
-        window = rumps.Window('Expected format : www.something.com', "Enter new address", cancel=True)
+        window = rumps.Window('Current target : ' + self.target_url, "Enter new address", cancel=True)
 
         response = window.run()
 
@@ -91,7 +91,7 @@ class MenuPingApp(rumps.App):
 
     def about(self, sender):
         rumps.alert(title='MenuPing',
-                    message="""Version 0.0.3 - FEV 2022 by J. Bordet
+                    message="""Version 0.2 - FEV 2022 by J. Bordet
                                https://github.com/julienbordet/MenuPing
                                
                                Simple Menubar app to monitor Internet connexion through ping

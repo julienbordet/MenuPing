@@ -10,11 +10,6 @@
     <array>
         <string>#ownpath#</string>
     </array>
-    <key>KeepAlive</key>
-    <dict>
-        <key>SuccessfulExit</key>
-        <true/>
-    </dict>
     <key>RunAtLoad</key>
     <true/>
 </dict>
