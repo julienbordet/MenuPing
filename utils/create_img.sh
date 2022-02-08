@@ -5,7 +5,9 @@ echo "| Creating image for application distribution |"
 echo "-----------------------------------------------"
 
 echo ""
-echo "Are you sure you did update every occurence of the version number in code and interface"
+echo "Are you sure you did : "
+echo "  - update every occurence of the version number in code and interface"
+echo "  - launch build_and_sign"
 echo ""
 echo -n "Confirm (Y/n) "
 
@@ -14,14 +16,6 @@ read answer
 if [ "$answer" = "n" ]; then
   exit 1
 fi
-
-echo "Building through py2app"
-python3 setup.py py2app
-
-echo "Signing code"
-cd dist
-codesign -v -f -s "Developer ID Application: Julien Bordet (3HLJ4AW5AX)" MenuPing.app
-cd ..
 
 echo "Creating working directory"
 cur_dir=`pwd`
