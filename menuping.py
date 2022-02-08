@@ -10,8 +10,7 @@ import shutil
 
 # Global variables
 
-unchecked_make_persistant_menu = "Launch at startup"
-checked_make_persistant_menu = "✓ " + unchecked_make_persistant_menu
+make_persistant_menu = "Launch at startup"
 
 plist_dir = "resources"
 plist_model_filename = "com.zejames.MenuPing-model.plist"
@@ -25,12 +24,12 @@ class MenuPingApp(rumps.App):
         super(MenuPingApp, self).__init__("MenuPing", template=True)
 
         # Check if we are already persistant
+        self.persistant_menu = rumps.MenuItem(make_persistant_menu, self.manage_persistant)
         if os.path.isfile(target_dir + '/' + plist_filename):
             self.is_persistant = True
-            self.persistant_menu = rumps.MenuItem(checked_make_persistant_menu, self.manage_persistant)
+            self.persistant_menu.state = True
         else:
             self.is_persistant = False
-            self.persistant_menu = rumps.MenuItem(unchecked_make_persistant_menu, self.manage_persistant)
 
         self.menu = [
             rumps.MenuItem("Change target", self.change_target),
@@ -53,9 +52,6 @@ class MenuPingApp(rumps.App):
         if self.is_persistant:
             # Delete LaunchAgents file
             os.remove(target_dir + '/' + plist_filename)
-
-            self.persistant_menu.title = unchecked_make_persistant_menu
-            self.is_persistant = False
         else:
             # Prepare plist file
             with open(plist_dir + '/' + plist_model_filename, 'r') as file:
@@ -69,8 +65,8 @@ class MenuPingApp(rumps.App):
             # Copy file to ~/Library/LaunchAgents
             shutil.copy(plist_dir + '/' + plist_filename, target_dir)
 
-            self.persistant_menu.title = checked_make_persistant_menu
-            self.is_persistant = True
+        sender.state = not sender.state
+        self.is_persistant = not self.is_persistant
 
     def change_target(self, sender):
         window = rumps.Window('Expected format : www.something.com', "Enter new address", cancel=True)
