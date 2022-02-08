@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import sys
 
 import rumps
 from ping3 import ping
@@ -23,7 +22,7 @@ target_dir = expanduser("~") + '/Library/LaunchAgents'
 class MenuPingApp(rumps.App):
 
     def __init__(self):
-        super(MenuPingApp, self).__init__("MenuPing")
+        super(MenuPingApp, self).__init__("MenuPing", template=True)
 
         # Check if we are already persistant
         if os.path.isfile(target_dir + '/' + plist_filename):
