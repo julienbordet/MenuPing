@@ -6,7 +6,7 @@ OPTIONS = {
     'argv_emulation': True,
     'iconfile': 'icon.icns',
     'plist': {
-        'CFBundleShortVersionString': '0.2',
+        'CFBundleShortVersionString': '0.3',
         'CFBundleIdentifier': 'info.bordet.menuping',
         'LSUIElement': True,
     },
@@ -18,5 +18,5 @@ setup(
     name='MenuPing',
     data_files=DATA_FILES,
     options={'py2app': OPTIONS},
-    setup_requires=['py2app'], install_requires=['rumps', 'ping3']
+    setup_requires=['py2app'], install_requires=['rumps', 'ping3', 'appdirs']
 )
