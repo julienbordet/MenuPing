@@ -21,10 +21,8 @@ find "${NAME}.app" -iname '*.so' -or -iname '*.dylib' |
                  --deep "${libfile}" \
                  --force \
                  --timestamp \
-                 --options runtime;
+                 --options runtime >/dev/null 2>&1;
     done;
-
-echo "Done"
 
 echo "Signing the bundle"
 codesign --sign "${IDENTITY}" \
@@ -32,7 +30,7 @@ codesign --sign "${IDENTITY}" \
          --deep "${NAME}.app" \
          --force \
          --timestamp \
-         --options runtime;
+         --options runtime >/dev/null 2>&1;
 
 cd ..
 
