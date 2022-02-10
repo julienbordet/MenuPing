@@ -10,7 +10,7 @@ OPTIONS = {
         'CFBundleIdentifier': 'info.bordet.menuping',
         'LSUIElement': True,
     },
-    'packages': ['rumps', 'ping3'],
+    'packages': ['rumps', 'ping3', 'appdirs'],
 }
 
 setup(

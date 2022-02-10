@@ -3,10 +3,13 @@
 import rumps
 from ping3 import ping
 import os
+from os import path
 from os.path import expanduser
 import shutil
+from appdirs import user_data_dir
+import configparser
 
-#rumps.debug_mode(True)
+# rumps.debug_mode(True)
 
 # Global variables
 
@@ -16,7 +19,10 @@ plist_dir = "resources"
 plist_model_filename = "com.zejames.MenuPing-model.plist"
 plist_filename = "com.zejames.MenuPing.plist"
 
-target_dir = expanduser("~") + '/Library/LaunchAgents'
+launch_dir = expanduser("~") + '/Library/LaunchAgents'
+pref_dir = user_data_dir("MenuPing")
+pref_file = "menuping.ini"
+
 
 class MenuPingApp(rumps.App):
 
@@ -25,11 +31,14 @@ class MenuPingApp(rumps.App):
 
         # Check if we are already persistant
         self.persistant_menu = rumps.MenuItem(make_persistant_menu, self.manage_persistant)
-        if os.path.isfile(target_dir + '/' + plist_filename):
+        if os.path.isfile(launch_dir + '/' + plist_filename):
             self.is_persistant = True
             self.persistant_menu.state = True
         else:
             self.is_persistant = False
+
+        # Load preferences
+        self.load_preferences()
 
         self.menu = [
             rumps.MenuItem("Change target", self.change_target),
@@ -38,8 +47,6 @@ class MenuPingApp(rumps.App):
             None,
             rumps.MenuItem("About", self.about)
         ]
-
-        self.target_url = "www.google.fr"
 
         self.timer = rumps.Timer(self.on_tick, 1)
         self.timer.start()
@@ -51,7 +58,7 @@ class MenuPingApp(rumps.App):
 
         if self.is_persistant:
             # Delete LaunchAgents file
-            os.remove(target_dir + '/' + plist_filename)
+            os.remove(launch_dir + '/' + plist_filename)
         else:
             # Prepare plist file
             with open(plist_dir + '/' + plist_model_filename, 'r') as file:
@@ -63,7 +70,7 @@ class MenuPingApp(rumps.App):
                 file.write(filedata)
 
             # Copy file to ~/Library/LaunchAgents
-            shutil.copy(plist_dir + '/' + plist_filename, target_dir)
+            shutil.copy(plist_dir + '/' + plist_filename, launch_dir)
 
         sender.state = not sender.state
         self.is_persistant = not self.is_persistant
@@ -80,7 +87,7 @@ class MenuPingApp(rumps.App):
             if delay is False:
                 rumps.alert(title='MenuPing', message="Unable to ping the entered address. Please enter new one")
             else:
-                self.target_url = new_target_url
+                self.update_target_url(new_target_url)
 
     def on_tick(self, sender):
         delay = ping(self.target_url)
@@ -101,6 +108,28 @@ class MenuPingApp(rumps.App):
                                Framework7 icons licensed under MIT
                                """,
                     ok=None, cancel=None)
+
+    def update_target_url(self, new_target_url):
+        if 'menuping' not in self.config.sections():
+            self.config['menuping'] = {}
+
+        self.config['menuping']['target_url'] = new_target_url
+        with open(pref_dir + '/' + pref_file, 'w') as file:
+            self.config.write(file)
+
+        self.target_url = new_target_url
+
+    def load_preferences(self):
+        if not path.isdir(pref_dir):
+            os.mkdir(pref_dir)
+
+        self.config = configparser.ConfigParser()
+        self.config.read(pref_dir + '/' + pref_file)
+
+        if 'menuping' in self.config.sections() and self.config['menuping']['target_url']:
+            self.target_url = self.config['menuping']['target_url']
+        else:
+            self.update_target_url("www.google.com")
 
 
 if __name__ == "__main__":

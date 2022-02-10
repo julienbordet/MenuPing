@@ -1,4 +1,5 @@
 altgraph==0.17.2
+appdirs==1.4.4
 macholib==1.15.2
 modulegraph==0.19.2
 ping3==3.0.2
