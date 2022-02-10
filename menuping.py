@@ -37,18 +37,24 @@ class MenuPingApp(rumps.App):
         else:
             self.is_persistant = False
 
+        # Default polling frequency is 1 sec
+        self.polling_freq = 1
+        # Default target is google
+        self.target_url = 'www.google.com'
+
         # Load preferences
         self.load_preferences()
 
         self.menu = [
             rumps.MenuItem("Change target", self.change_target),
+            rumps.MenuItem("Change polling freq", self.change_polling_freq),
             None,
             self.persistant_menu,
             None,
             rumps.MenuItem("About", self.about)
         ]
 
-        self.timer = rumps.Timer(self.on_tick, 1)
+        self.timer = rumps.Timer(self.on_tick, self.polling_freq)
         self.timer.start()
 
         self.icon = 'icon.icns'
@@ -89,6 +95,21 @@ class MenuPingApp(rumps.App):
             else:
                 self.update_target_url(new_target_url)
 
+    def change_polling_freq(self, sender):
+        window = rumps.Window('Current polling frequency : ' + str(self.polling_freq), "Enter new frequency", cancel=True)
+
+        response = window.run()
+
+        if response.clicked == 1:
+            try:
+                new_polling_freq = int(response.text)
+                if new_polling_freq < 0:
+                    raise ValueError
+            except ValueError:
+                rumps.alert(title='MenuPing', message="Entered value is not an positive integer")
+            else:
+                self.update_polling_freq(new_polling_freq)
+
     def on_tick(self, sender):
         delay = ping(self.target_url)
         if delay is False:
@@ -119,6 +140,23 @@ class MenuPingApp(rumps.App):
 
         self.target_url = new_target_url
 
+    def update_polling_freq(self, new_polling_freq):
+        if 'menuping' not in self.config.sections():
+            self.config['menuping'] = {}
+
+        self.config['menuping']['polling_frequency'] = str(new_polling_freq)
+        with open(pref_dir + '/' + pref_file, 'w') as file:
+            self.config.write(file)
+
+        if new_polling_freq != self.polling_freq:
+            self.polling_freq = new_polling_freq
+
+            if self.timer:
+                self.timer.stop()
+
+            self.timer = rumps.Timer(self.on_tick, self.polling_freq)
+            self.timer.start()
+
     def load_preferences(self):
         if not path.isdir(pref_dir):
             os.mkdir(pref_dir)
@@ -126,11 +164,15 @@ class MenuPingApp(rumps.App):
         self.config = configparser.ConfigParser()
         self.config.read(pref_dir + '/' + pref_file)
 
-        if 'menuping' in self.config.sections() and self.config['menuping']['target_url']:
+        if 'menuping' in self.config.sections() and 'target_url' in self.config['menuping'].keys():
             self.target_url = self.config['menuping']['target_url']
         else:
-            self.update_target_url("www.google.com")
+            self.update_target_url(self.target_url)
 
+        if 'menuping' in self.config.sections() and 'polling_frequency' in self.config['menuping'].keys():
+            self.polling_freq = int(self.config['menuping']['polling_frequency'])
+        else:
+            self.update_polling_freq(self.polling_freq)
 
 if __name__ == "__main__":
     app = MenuPingApp()
