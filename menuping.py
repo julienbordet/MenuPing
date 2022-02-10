@@ -103,8 +103,10 @@ class MenuPingApp(rumps.App):
         if response.clicked == 1:
             try:
                 new_polling_freq = int(response.text)
+                if new_polling_freq < 0:
+                    raise ValueError
             except ValueError:
-                rumps.alert(title='MenuPing', message="Enter value is not an positive integer")
+                rumps.alert(title='MenuPing', message="Entered value is not an positive integer")
             else:
                 self.update_polling_freq(new_polling_freq)
 
