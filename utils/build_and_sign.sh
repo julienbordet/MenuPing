@@ -30,7 +30,7 @@ codesign --sign "${IDENTITY}" \
          --deep "${NAME}.app" \
          --force \
          --timestamp \
-         --options runtime 2>&1;
+         --options runtime >/dev/null 2>&1;
 
 cd ..
 
