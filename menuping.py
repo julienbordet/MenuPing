@@ -131,8 +131,6 @@ class MenuPingApp(rumps.App):
         else:
             self.update_target_url("www.google.com")
 
-        print(self.target_url)
-
 
 if __name__ == "__main__":
     app = MenuPingApp()
