@@ -20,33 +20,33 @@ if [ "$answer" = "n" ]; then
 fi
 
 echo "Creating working directory"
-cur_dir=`pwd`
-temp_dir=`mktemp -d`
-temp_vol=`mktemp`
+CUR_DIR=$(pwd)
+TEMP_DIR=$(mktemp -d)
+TEMP_VOL=$(mktemp)
 
 if [ ! -d dist/${NAME}.app ]; then
   echo " --> You lied, you did not create build the app"
   exit 1
 fi
 
-if [ -f $cur_dir"/dist/${NAME}.dmg" ]; then
+if [ -f "${CUR_DIR}/dist/${NAME}.dmg" ]; then
   echo -n " --> Warning : target file dist/${NAME}.dmg already exists. Are you sure you want to overwrite ? (Y/n) "
   read answer
 
   if [ "$answer" = "n" ]; then
     exit 1
   else
-    rm $cur_dir"/dist/${NAME}.dmg"
+    rm "${CUR_DIR}/dist/${NAME}.dmg"
   fi
 fi
 
-cp -a dist/${NAME}.app $temp_dir
-cd $temp_dir
+cp -a "dist/${NAME}.app" "${TEMP_DIR}"
+cd "${TEMP_DIR}" || echo "Unable to cd to ${TEMP_DIR}" and exit 1
 ln -s /Applications/ App
 mv App " "
 
 echo -n "Creating dmgfile. "
-hdiutil create $temp_vol.dmg -ov -volname "${NAME}" -fs HFS+ -srcfolder $cur_dir"/dist/${NAME}.app/" >/dev/null 2>&1
+hdiutil create "${TEMP_VOL}.dmg" -ov -volname "${NAME}" -fs HFS+ -srcfolder "${CUR_DIR}/dist/${NAME}.app/" >/dev/null 2>&1
 
 if [ $? -ne 0 ]; then
   echo "Error creating the dmgfile"
@@ -55,7 +55,7 @@ fi
 echo "Done"
 
 echo -n "Converting to application dmg. "
-hdiutil convert $temp_vol.dmg -format UDZO -o $cur_dir"/dist/${NAME}.dmg" >/dev/null 2>&1
+hdiutil convert "${TEMP_VOL}.dmg" -format UDZO -o "${CUR_DIR}/dist/${NAME}.dmg" >/dev/null 2>&1
 
 if [ $? -ne 0 ]; then
   echo "Error in conversion"

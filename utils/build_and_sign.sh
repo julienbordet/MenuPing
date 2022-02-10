@@ -24,8 +24,6 @@ find "${NAME}.app" -iname '*.so' -or -iname '*.dylib' |
                  --options runtime;
     done;
 
-echo "Done"
-
 echo "Signing the bundle"
 codesign --sign "${IDENTITY}" \
          --entitlements ../resources/entitlements.plist \
