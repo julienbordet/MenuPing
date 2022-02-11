@@ -8,6 +8,13 @@ echo "------------------------------------"
 echo "| Building and codesigning the app |"
 echo "------------------------------------"
 
+echo "Checking pre-requisites"
+
+if [[ "$VIRTUAL_ENV" == "" ]]; then
+  echo " -> you should be in virtual env to build ${NAME}"
+  exit 1
+fi
+
 echo "Building through py2app"
 python3 setup.py py2app >/dev/null 2>&1
 
