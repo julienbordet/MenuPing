@@ -23,4 +23,4 @@ Have a look at binary and sources available on [the release page](https://github
 
 ## What is the current version
 
-The current version is 0.3
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/julienbordet/MenuPing)](https://github.com/julienbordet/MenuPing/releases)
