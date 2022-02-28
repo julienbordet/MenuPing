@@ -8,6 +8,7 @@ from os.path import expanduser
 import shutil
 from appdirs import user_data_dir
 import configparser
+from _version import __version__
 
 # rumps.debug_mode(True)
 
@@ -119,15 +120,15 @@ class MenuPingApp(rumps.App):
 
     def about(self, sender):
         rumps.alert(title='MenuPing',
-                    message="""Version 0.3 - FEV 2022 by J. Bordet
-                               https://github.com/julienbordet/MenuPing
-                               
-                               Simple Menubar app to monitor Internet connexion through ping
-                               
-                               Licensed under MIT.
-                               rumps licensed under BSD 3-Clause.
-                               Framework7 icons licensed under MIT
-                               """,
+                    message=(f"Version {__version__} - FEV 2022 by J. Bordet\n"
+                              "https://github.com/julienbordet/MenuPing\n"
+                              "\n" 
+                              "Simple Menubar app to monitor Internet connexion through ping\n"
+                              "\n" 
+                              "Licensed under MIT.\n"
+                              "rumps licensed under BSD 3-Clause.\n"
+                              "Framework7 icons licensed under MIT\n"
+                              ""),
                     ok=None, cancel=None)
 
     def update_target_url(self, new_target_url):

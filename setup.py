@@ -1,12 +1,13 @@
 from setuptools import setup
+from app._version import __version__
 
-APP = ['menuping.py']
+APP = ['app/menuping.py']
 DATA_FILES = [ ('resources') ]
 OPTIONS = {
     'argv_emulation': True,
     'iconfile': 'icon.icns',
     'plist': {
-        'CFBundleShortVersionString': '0.3',
+        'CFBundleShortVersionString': __version__,
         'CFBundleIdentifier': 'info.bordet.menuping',
         'LSUIElement': True,
     },
