@@ -55,6 +55,8 @@ class MenuPingApp(rumps.App):
             rumps.MenuItem("About", self.about)
         ]
 
+        self.config = configparser.ConfigParser()
+
         self.timer = rumps.Timer(self.on_tick, self.polling_freq)
         self.timer.start()
 
@@ -163,7 +165,6 @@ class MenuPingApp(rumps.App):
         if not path.isdir(pref_dir):
             os.mkdir(pref_dir)
 
-        self.config = configparser.ConfigParser()
         self.config.read(pref_dir + '/' + pref_file)
 
         if 'menuping' in self.config.sections() and 'target_url' in self.config['menuping'].keys():
