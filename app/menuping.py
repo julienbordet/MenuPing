@@ -97,7 +97,8 @@ class MenuPingApp(rumps.App):
                 self.update_target_url(new_target_url)
 
     def change_polling_freq(self, sender):
-        window = rumps.Window('Current polling frequency : ' + str(self.polling_freq), "Enter new frequency", cancel=True)
+        window = rumps.Window('Current polling frequency : ' + str(self.polling_freq), "Enter new frequency",
+                              cancel=True)
 
         response = window.run()
 
@@ -121,10 +122,10 @@ class MenuPingApp(rumps.App):
     def about(self, sender):
         rumps.alert(title='MenuPing',
                     message=(f"Version {__version__} - FEV 2022 by J. Bordet\n"
-                              "https://github.com/julienbordet/MenuPing\n"
-                              "\n" 
+                              "https://github.com/julienbordet/MenuPing\n"  # noqa: E127
+                              "\n"
                               "Simple Menubar app to monitor Internet connexion through ping\n"
-                              "\n" 
+                              "\n"
                               "Licensed under MIT.\n"
                               "rumps licensed under BSD 3-Clause.\n"
                               "Framework7 icons licensed under MIT\n"
@@ -174,6 +175,7 @@ class MenuPingApp(rumps.App):
             self.polling_freq = int(self.config['menuping']['polling_frequency'])
         else:
             self.update_polling_freq(self.polling_freq)
+
 
 if __name__ == "__main__":
     app = MenuPingApp()
