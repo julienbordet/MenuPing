@@ -28,7 +28,11 @@ find "${NAME}.app" -iname '*.so' -or -iname '*.dylib' |
                  --deep "${libfile}" \
                  --force \
                  --timestamp \
-                 --options runtime >/dev/null 2>&1;
+                 --options runtime >/dev/null 2>&1 ;
+        if [ $? -ne 0 ]; then
+            echo " -> error signing ${libfile}"
+            exit 1
+        fi
     done;
 
 echo "Signing the bundle"
@@ -37,7 +41,12 @@ codesign --sign "${IDENTITY}" \
          --deep "${NAME}.app" \
          --force \
          --timestamp \
-         --options runtime >/dev/null 2>&1;
+         --options runtime >/dev/null 2>&1 ;
+
+if [ $? -ne 0 ]; then
+    echo " -> error signing ${NAME}.app"
+    exit 1
+fi
 
 cd ..
 
@@ -68,7 +77,15 @@ echo "You should check the notarization result before creating the image for dis
 # or
 # xcrun altool --verbose --notarization-history 0 -u zejames@gmail.com --password "@keychain:AC_PASSWORD"
 #
+# To investigate a notarization issue, retrieve the log file associated with the RequestUUID using the
+# following command:
+#
+# xcrun altool --notarization-info <RequestUUID> -u zejames@gmail.com --password "@keychain:AC_PASSWORD"
+#
+# grep the output for "LogFileURL" and download the log file using the URL provided.
+
 #
 # Staple the App
+#
 echo "After notarization, you should staple the app, with"
 echo "  # xcrun stapler staple " "dist/${NAME}.app"
