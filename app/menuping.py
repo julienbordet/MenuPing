@@ -39,6 +39,8 @@ class MenuPingApp(rumps.App):
         # Default target is google
         self.target_url = 'www.google.com'
 
+        self.config = configparser.ConfigParser()
+
         # Load preferences
         self.load_preferences()
 
@@ -51,8 +53,6 @@ class MenuPingApp(rumps.App):
             rumps.MenuItem("About", self.about)
         ]
 
-        self.config = configparser.ConfigParser()
-
         self.timer = rumps.Timer(self.on_tick, self.polling_freq)
         self.timer.start()
 
@@ -61,7 +61,7 @@ class MenuPingApp(rumps.App):
     def check_persistence(self) -> bool:
         try:
             if path.isfile(launch_dir + '/' + plist_filename):
-                self.persistant_menustate = True
+                self.persistant_menu.state = True
                 return True
             else:
                 return False
