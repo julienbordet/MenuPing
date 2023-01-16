@@ -1,10 +1,11 @@
 from setuptools import setup
-from app._version import __version__
+
+__version__ = '0.4.0'
 
 if __name__ == "__main__":
 
     APP = ['app/menuping.py']
-    DATA_FILES = [ ('resources') ]
+    DATA_FILES = [('resources')]
     OPTIONS = {
         'argv_emulation': True,
         'iconfile': 'icon.icns',

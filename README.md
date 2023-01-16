@@ -9,7 +9,7 @@ Quick Menu bar tool to ping internet at regular intervals and show the response 
 
 Written in Python, thanks to [rumps](https://github.com/jaredks/rumps) and py2app
 
-## What does it do ? 
+## What does it do ?
 
 Very basic :
 
