@@ -91,7 +91,8 @@ class MenuPingApp(rumps.App):
         self.is_persistant = not self.is_persistant
 
     def change_target(self, sender) -> None:
-        window = rumps.Window('Current target : ' + self.target_url, "Enter new address", cancel=True)
+        window = rumps.Window('Current target : ' + self.target_url, "Enter new address", cancel=True,
+                              dimensions=(180, 20))
 
         response = window.run()
 
@@ -105,8 +106,8 @@ class MenuPingApp(rumps.App):
                 self.update_target_url(new_target_url)
 
     def change_polling_freq(self, sender) -> None:
-        window = rumps.Window('Current polling frequency : ' + str(self.polling_freq), "Enter new frequency",
-                              cancel=True)
+        window = rumps.Window('Current polling frequency : ' + str(self.polling_freq),
+                              "Enter new frequency", cancel=True, dimensions=(100, 20))
 
         response = window.run()
 
