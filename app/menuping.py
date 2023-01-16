@@ -27,16 +27,12 @@ pref_file = "menuping.ini"
 
 class MenuPingApp(rumps.App):
 
-    def __init__(self):
+    def __init__(self) -> None:
         super(MenuPingApp, self).__init__("MenuPing", template=True)
 
         # Check if we are already persistant
         self.persistant_menu = rumps.MenuItem(make_persistant_menu, self.manage_persistant)
-        if os.path.isfile(launch_dir + '/' + plist_filename):
-            self.is_persistant = True
-            self.persistant_menu.state = True
-        else:
-            self.is_persistant = False
+        self.is_persistant = self.check_persistence()
 
         # Default polling frequency is 1 sec
         self.polling_freq = 1
@@ -62,7 +58,17 @@ class MenuPingApp(rumps.App):
 
         self.icon = 'icon.icns'
 
-    def manage_persistant(self, sender):
+    def check_persistence(self) -> bool:
+        try:
+            if path.isfile(launch_dir + '/' + plist_filename):
+                self.persistant_menustate = True
+                return True
+            else:
+                return False
+        except Exception as e:
+            raise Exception("An error occured while checking persistence : " + str(e))
+
+    def manage_persistant(self, sender) -> None:
         fullpath = os.getcwd() + "/../MacOS/" + 'MenuPing'
 
         if self.is_persistant:
@@ -84,7 +90,7 @@ class MenuPingApp(rumps.App):
         sender.state = not sender.state
         self.is_persistant = not self.is_persistant
 
-    def change_target(self, sender):
+    def change_target(self, sender) -> None:
         window = rumps.Window('Current target : ' + self.target_url, "Enter new address", cancel=True)
 
         response = window.run()
@@ -98,7 +104,7 @@ class MenuPingApp(rumps.App):
             else:
                 self.update_target_url(new_target_url)
 
-    def change_polling_freq(self, sender):
+    def change_polling_freq(self, sender) -> None:
         window = rumps.Window('Current polling frequency : ' + str(self.polling_freq), "Enter new frequency",
                               cancel=True)
 
@@ -114,14 +120,14 @@ class MenuPingApp(rumps.App):
             else:
                 self.update_polling_freq(new_polling_freq)
 
-    def on_tick(self, sender):
+    def on_tick(self, sender) -> None:
         delay = ping(self.target_url)
         if delay is False:
             self.title = "🔴"
         else:
             self.title = "{:.0f} ms".format(delay*1000)
 
-    def about(self, sender):
+    def about(self, sender) -> None:
         rumps.alert(title='MenuPing',
                     message=(f"Version {__version__} - FEV 2022 by J. Bordet\n"
                               "https://github.com/julienbordet/MenuPing\n"  # noqa: E127
@@ -134,7 +140,7 @@ class MenuPingApp(rumps.App):
                               ""),
                     ok=None, cancel=None)
 
-    def update_target_url(self, new_target_url):
+    def update_target_url(self, new_target_url: str) -> None:
         if 'menuping' not in self.config.sections():
             self.config['menuping'] = {}
 
@@ -144,7 +150,7 @@ class MenuPingApp(rumps.App):
 
         self.target_url = new_target_url
 
-    def update_polling_freq(self, new_polling_freq):
+    def update_polling_freq(self, new_polling_freq: int) -> None:
         if 'menuping' not in self.config.sections():
             self.config['menuping'] = {}
 
@@ -161,7 +167,7 @@ class MenuPingApp(rumps.App):
             self.timer = rumps.Timer(self.on_tick, self.polling_freq)
             self.timer.start()
 
-    def load_preferences(self):
+    def load_preferences(self) -> None:
         if not path.isdir(pref_dir):
             os.mkdir(pref_dir)
 
