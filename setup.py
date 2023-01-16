@@ -4,7 +4,7 @@ from app._version import __version__
 if __name__ == "__main__":
 
     APP = ['app/menuping.py']
-    DATA_FILES = [ ('resources') ]
+    DATA_FILES = [('resources')]
     OPTIONS = {
         'argv_emulation': True,
         'iconfile': 'icon.icns',
