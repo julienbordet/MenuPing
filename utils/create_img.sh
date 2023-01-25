@@ -42,11 +42,11 @@ fi
 
 cp -a "dist/${NAME}.app" "${TEMP_DIR}"
 cd "${TEMP_DIR}" || echo "Unable to cd to ${TEMP_DIR}" and exit 1
-ln -s /Applications/ App
-mv App " "
+ln -s /Applications/ Applications
 
-echo -n "Creating dmgfile. "
-hdiutil create "${TEMP_VOL}.dmg" -ov -volname "${NAME}" -fs HFS+ -srcfolder "${CUR_DIR}/dist/${NAME}.app/" >/dev/null 2>&1
+echo -n "Creating dmgfile "
+echo "hdiutil create "${TEMP_VOL}.dmg" -ov -volname "${NAME}" -fs HFS+ -srcfolder "${TEMP_DIR}" >/dev/null 2>&1"
+hdiutil create "${TEMP_VOL}.dmg" -ov -volname "${NAME}" -fs HFS+ -srcfolder "${TEMP_DIR}" >/dev/null 2>&1
 
 if [ $? -ne 0 ]; then
   echo "Error creating the dmgfile"
