@@ -8,7 +8,7 @@ if __name__ == "__main__":
     DATA_FILES = [('resources')]
     OPTIONS = {
         'argv_emulation': True,
-        'iconfile': 'icon.icns',
+        'iconfile': 'resources/icon.icns',
         'plist': {
             'CFBundleShortVersionString': __version__,
             'CFBundleIdentifier': 'info.bordet.menuping',
