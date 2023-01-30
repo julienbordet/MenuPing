@@ -25,7 +25,7 @@ Have a look at binary and sources available on [the release page](https://github
 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/julienbordet/MenuPing)](https://github.com/julienbordet/MenuPing/releases)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/julienbordet/MenuPing)
-![CodeFactor](https://www.codefactor.io/repository/github/julienbordet/MenuPing/badge)](https://www.codefactor.io/repository/github/julienbordet/MenuPing)
+![CodeFactor](https://www.codefactor.io/repository/github/julienbordet/MenuPing/badge)]
 ![GitHub Release Date](https://img.shields.io/github/release-date/julienbordet/MenuPing?logo=github)
 ![GitHub last commit](https://img.shields.io/github/last-commit/julienbordet/MenuPing?logo=github)
 ![GitHub Repo stars](https://img.shields.io/github/stars/julienbordet/MenuPing?style=social)
