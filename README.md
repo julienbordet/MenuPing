@@ -30,3 +30,7 @@ Have a look at binary and sources available on [the release page](https://github
 ![GitHub last commit](https://img.shields.io/github/last-commit/julienbordet/MenuPing?logo=github)
 ![GitHub Repo stars](https://img.shields.io/github/stars/julienbordet/MenuPing?style=social)
 ![GitHub forks](https://img.shields.io/github/forks/julienbordet/MenuPing?style=social)
+
+## Star history
+
+[![Star History Chart](https://api.star-history.com/svg?repos=julienbordet/MenuPing&type=Date)](https://star-history.com/#julienbordet/MenuPing&Date)
