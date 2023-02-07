@@ -1,0 +1,16 @@
+name: build on Monterey
+
+on:
+  # Trigger the workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  deployment:
+    runs-on: macos-12
+    steps:
+      - name: getting source code
+        uses: actions/checkout@v3
+      - name: install MacPorts
+        uses: melusina-org/gha-install-macports@v1
+        with:
+          parameters: 'testsuite/run-testsuite-on-macos-12.yaml'
