@@ -16,7 +16,7 @@ if [[ "$VIRTUAL_ENV" == "" ]]; then
 fi
 
 echo "Building through py2app"
-python3 setup.py py2app >/dev/null 2>&1
+python3 setup.py py2app --arch universal2 >/dev/null 2>&1
 
 echo "Signing librairies code"
 cd dist

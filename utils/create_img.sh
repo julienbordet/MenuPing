@@ -41,6 +41,8 @@ if [ -f "${CUR_DIR}/dist/${NAME}.dmg" ]; then
 fi
 
 cp -a "dist/${NAME}.app" "${TEMP_DIR}"
+mkdir "${TEMP_DIR}/.background"
+cp -a "resources/background.tiff" "${TEMP_DIR}/.background"
 cd "${TEMP_DIR}" || echo "Unable to cd to ${TEMP_DIR}" and exit 1
 ln -s /Applications/ Applications
 
