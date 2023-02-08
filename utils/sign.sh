@@ -1,22 +1,12 @@
 #!/bin/bash
 
 export IDENTITY="Developer ID Application: Julien Bordet (3HLJ4AW5AX)"
-export NAME="MenuPing"
+export NAME=$1
 export YOUR_BUNDLE_ID="info.bordet.menuping"
 
-echo "------------------------------------"
-echo "| Building and codesigning the app |"
-echo "------------------------------------"
-
-echo "Checking pre-requisites"
-
-if [[ "$VIRTUAL_ENV" == "" ]]; then
-  echo " -> you should be in virtual env to build ${NAME}"
-  exit 1
-fi
-
-echo "Building through py2app"
-python3 setup.py py2app --arch universal2 >/dev/null 2>&1
+echo "-----------------------"
+echo "| Codesigning the app |"
+echo "-----------------------"
 
 echo "Signing librairies code"
 cd dist

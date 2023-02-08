@@ -1,6 +1,6 @@
 from setuptools import setup
 
-__version__ = '0.4.2'
+__version__ = '0.4.3'
 
 if __name__ == "__main__":
 
@@ -22,5 +22,6 @@ if __name__ == "__main__":
         name='MenuPing',
         data_files=DATA_FILES,
         options={'py2app': OPTIONS},
-        setup_requires=['py2app'], install_requires=['rumps', 'ping3', 'appdirs']
+        setup_requires=['py2app'], install_requires=['rumps', 'ping3', 'appdirs'],
+        py_modules=[''],
     )
