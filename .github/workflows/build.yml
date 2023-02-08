@@ -10,7 +10,18 @@ jobs:
     steps:
       - name: getting source code
         uses: actions/checkout@v3
-      - name: install MacPorts
-        uses: melusina-org/gha-install-macports@v1
+      - name: Setup Python
+        uses: actions/setup-python@v2
         with:
-          parameters: 'testsuite/run-testsuite-on-macos-12.yaml'
+          python-version: '3.9'
+      - name: Install dependencies
+        run: |
+          virtualenv venv
+          source venv/bin/activate
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e ".[dev]"
+      - name: Build
+        run: |
+          source venv/bin/activate
+          ./utils/build.sh
