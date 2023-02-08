@@ -26,3 +26,8 @@ jobs:
         run: |
           source venv/bin/activate
           ./utils/build.sh
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: build
