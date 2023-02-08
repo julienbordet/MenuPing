@@ -12,8 +12,7 @@ if [[ "$VIRTUAL_ENV" == "" ]]; then
 fi
 
 echo "Building through py2app"
-#python3 setup.py py2app --arch universal2 >/dev/null 2>&1
-python3 setup.py py2app --arch universal2
+python3 setup.py py2app --arch universal2 >/dev/null 2>&1
 
 if [ $? -ne 0 ]; then
     echo " -> error building ${NAME}"
