@@ -26,8 +26,9 @@ jobs:
         run: |
           source venv/bin/activate
           ./utils/build.sh
+          tar czvd dist.tar.gz dist
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: dist
-          path: dist
+          name: dist.tar.gz
+          path: dist.tar.gz
