@@ -137,9 +137,11 @@ class MenuPingApp(rumps.App):
                 self.update_polling_freq(new_polling_freq)
 
     def on_tick(self, sender) -> None:
-        delay = ping(self.target_url)
-        if delay is False:
+        delay = ping(self.target_url, timeout=self.polling_freq)
+        if delay is False:  # Unreachable
             self.title = "🔴"
+        elif delay is None:  # Timeout
+            self.title = "🟡"
         else:
             self.title = "{:.0f} ms".format(delay * 1000)
 
