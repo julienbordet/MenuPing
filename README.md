@@ -20,6 +20,14 @@ Very basic :
 
 Have a look at binary and sources available on [the release page](https://github.com/julienbordet/MenuPing/releases/)
 
+## Tested on
+
+* macOS Ventura, Apple M1
+* macOS Monterey, Apple x86
+* macOS Big Sur, Apple x86
+
+Please report an issue if that does work on your system.
+
 
 ## What is the current version
 

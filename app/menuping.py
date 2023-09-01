@@ -57,6 +57,7 @@ class MenuPingApp(rumps.App):
         self.timer.start()
 
         self.icon = 'icon.icns'
+        self.title = ''
 
     def check_persistence(self) -> bool:
         try:
@@ -122,9 +123,11 @@ class MenuPingApp(rumps.App):
                 self.update_polling_freq(new_polling_freq)
 
     def on_tick(self, sender) -> None:
-        delay = ping(self.target_url)
+        delay = ping(self.target_url, timeout=self.polling_freq)
         if delay is False:
             self.title = "🔴"
+        elif delay is None:
+            self.title = "🟡"
         else:
             self.title = "{:.0f} ms".format(delay*1000)
 
