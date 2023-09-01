@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export IDENTITY="Developer ID Application: Julien Bordet (3HLJ4AW5AX)"
+export TEAM_ID="3HLJ4AW5AX"
 export NAME=$1
 export YOUR_BUNDLE_ID="info.bordet.menuping"
 
@@ -57,6 +58,11 @@ ditto -c -k --keepParent "dist/${NAME}.app" dist/${NAME}.zip
 echo "Sending for notarization (can be a bit long)"
 xcrun altool --notarize-app -t osx -f dist/${NAME}.zip --primary-bundle-id ${YOUR_BUNDLE_ID} \
           -u zejames@gmail.com --password "@keychain:AC_PASSWORD"
+
+# Use notarytool to submit the app for notarization
+#xcrun notarytool submit dist/${NAME}.zip --wait --keychain-profile "AC_PASSWORD" \
+#                 --apple-id "zejames@gmail" --team-id "$TEAM_ID" \
+#                 --password "@keychain:AC_PASSWORD"
 
 echo "You should check the notarization result before creating the image for distribution"
 
