@@ -133,7 +133,7 @@ class MenuPingApp(rumps.App):
 
     def about(self, sender) -> None:
         rumps.alert(title='MenuPing',
-                    message=(f"Version {__version__} - FEV 2023 by J. Bordet\n"
+                    message=(f"Version {__version__} - SEPT 2023 by J. Bordet\n"
                               "https://github.com/julienbordet/MenuPing\n"  # noqa: E127
                               "\n"
                               "Simple Menubar app to monitor Internet connexion through ping\n"
