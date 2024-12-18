@@ -22,7 +22,10 @@ Have a look at binary and sources available on [the release page](https://github
 
 ## Tested on
 
+* macOS Montery, Apple M1
 * macOS Ventura, Apple M1
+* macOS Sonoma, Apple M1
+* macOS Sequoia, Apple M1
 * macOS Monterey, Apple x86
 * macOS Big Sur, Apple x86
 
