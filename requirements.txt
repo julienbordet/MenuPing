@@ -1,9 +1,0 @@
-altgraph
-appdirs
-macholib
-modulegraph
-ping3
-py2app>=0.28.5
-pyobjc-core
-pyobjc-framework-Cocoa
-rumps
