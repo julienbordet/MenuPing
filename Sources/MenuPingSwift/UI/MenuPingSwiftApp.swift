@@ -13,7 +13,6 @@ import AppKit
 @main
 struct MenuPingSwiftApp: App {
     @State private var viewModel = AppViewModel()
-    @State private var shouldOpenSettings = true // TEMPORAIRE: pour ouvrir au lancement
     @Environment(\.openURL) private var openURL
     @Environment(\.openWindow) private var openWindow
     
@@ -41,17 +40,6 @@ struct MenuPingSwiftApp: App {
         // Menu bar item
         MenuBarExtra {
             MenuView(viewModel: viewModel)
-                .background {
-                    // TEMPORAIRE: Petit hack pour ouvrir Settings au lancement
-                    Color.clear
-                        .task {
-                            if shouldOpenSettings {
-                                try? await Task.sleep(for: .milliseconds(300))
-                                openWindow(id: "settings")
-                                shouldOpenSettings = false
-                            }
-                        }
-                }
         } label: {
             HStack(spacing: 4) {
                 // Custom icon from resources

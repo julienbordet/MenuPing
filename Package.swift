@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "MenuPingSwift",
+    defaultLocalization: "en",
     platforms: [
         .macOS(.v15)
     ],

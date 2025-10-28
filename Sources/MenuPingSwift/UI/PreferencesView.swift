@@ -19,8 +19,15 @@ struct PreferencesView: View {
     @State private var selectedTab: SettingsTab = .general
     
     enum SettingsTab: String, CaseIterable {
-        case general = "General"
-        case about = "About"
+        case general
+        case about
+        
+        var localizedName: String {
+            switch self {
+            case .general: return "preferences.tab.general".localized()
+            case .about: return "preferences.tab.about".localized()
+            }
+        }
         
         var icon: String {
             switch self {
@@ -47,7 +54,7 @@ struct PreferencesView: View {
                             Image(systemName: tab.icon)
                                 .font(.system(size: 16))
                                 .imageScale(.large)
-                            Text(tab.rawValue)
+                            Text(tab.localizedName)
                                 .font(.system(size: 11))
                         }
                         .foregroundColor(selectedTab == tab ? .accentColor : .secondary)
@@ -104,12 +111,12 @@ struct PreferencesView: View {
             VStack(alignment: .leading, spacing: 16) {
                 // Target Host row
                 HStack(alignment: .center, spacing: 12) {
-                    Text("Target Host:")
+                    Text("preferences.general.target_host".localized())
                         .fontWeight(.bold)
                         .frame(width: 120, alignment: .trailing)
                     
                     // Column 2: Input
-                    TextField("e.g., www.google.com", text: $hostInput)
+                    TextField("preferences.general.target_host.placeholder".localized(), text: $hostInput)
                         .textFieldStyle(.plain)
                         .padding(6)
                         .background(Color(nsColor: .quaternaryLabelColor).opacity(0.75))
@@ -129,7 +136,7 @@ struct PreferencesView: View {
                 // Update Interval row
                 HStack(alignment: .center, spacing: 12) {
                     // Column 1: Label
-                    Text("Update Interval:")
+                    Text("preferences.general.update_interval".localized())
                         .fontWeight(.bold)
                         .frame(width: 120, alignment: .trailing)
                     
@@ -150,7 +157,7 @@ struct PreferencesView: View {
                         }
                     
                     // Column 3: Unit
-                    Text("second(s)")
+                    Text("preferences.general.update_interval.unit".localized())
                         .foregroundColor(.secondary)
                     
                     Spacer()
@@ -167,18 +174,15 @@ struct PreferencesView: View {
     var aboutView: some View {
         VStack(spacing: 0) {
             // Content principal - Layout en deux colonnes
-            HStack(alignment: .top, spacing: 20) {
-                // Colonne gauche : Icône
-                Group {
-                    if let iconURL = Bundle.main.url(forResource: "icon", withExtension: "icns"),
-                       let appIcon = NSImage(contentsOf: iconURL) {
+            HStack(alignment: .center, spacing: 20) {
+                // Colonne gauche : Icône (centrée)
+                VStack {
+                    if let appIcon = loadAppIcon() {
                         Image(nsImage: appIcon)
                             .resizable()
-                            .frame(width: 64, height: 64)
-                    } else if let iconURL = Bundle.module.url(forResource: "menubar-icon", withExtension: "png"),
-                              let appIcon = NSImage(contentsOf: iconURL) {
-                        Image(nsImage: appIcon)
-                            .resizable()
+                            .interpolation(.high)
+                            .antialiased(true)
+                            .aspectRatio(contentMode: .fit)
                             .frame(width: 64, height: 64)
                     } else {
                         Image(systemName: "network")
@@ -187,26 +191,31 @@ struct PreferencesView: View {
                             .frame(width: 64, height: 64)
                     }
                 }
+                .frame(width: 80, alignment: .center)
                 
                 // Colonne droite : Texte
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("MenuPing")
+                    Text("preferences.about.app_name".localized())
                         .font(.title2)
                         .fontWeight(.semibold)
                     
-                    Text("Version 1.0.0")
+                    Text("preferences.about.version".localized())
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     
-                    Text("Monitor your internet connection latency")
+                    Text("preferences.about.description".localized())
                         .font(.body)
                         .foregroundColor(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                     
-                    Text("© 2025 Julien Bordet")
+                    Text("preferences.about.license".localized())
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .padding(.top, 4)
+                    
+                    Text("preferences.about.copyright".localized())
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -226,7 +235,7 @@ struct PreferencesView: View {
                         NSWorkspace.shared.open(url)
                     }
                 }) {
-                    Text("Acknowledgements")
+                    Text("preferences.about.acknowledgements".localized())
                         .font(.system(size: 11))
                         .foregroundColor(.primary)
                         .frame(maxWidth: .infinity)
@@ -242,7 +251,7 @@ struct PreferencesView: View {
                         NSWorkspace.shared.open(url)
                     }
                 }) {
-                    Text("Visit Website")
+                    Text("preferences.about.visit_website".localized())
                         .font(.system(size: 11))
                         .foregroundColor(.primary)
                         .frame(maxWidth: .infinity)
@@ -259,7 +268,7 @@ struct PreferencesView: View {
                         NSWorkspace.shared.open(url)
                     }
                 }) {
-                    Text("Send Feedback")
+                    Text("preferences.about.send_feedback".localized())
                         .font(.system(size: 11))
                         .foregroundColor(.primary)
                         .frame(maxWidth: .infinity)
@@ -278,6 +287,27 @@ struct PreferencesView: View {
     
     // MARK: - Helper Functions
     
+    /// Charge l'icône de l'application en haute résolution
+    private func loadAppIcon() -> NSImage? {
+        // Essayer de charger le fichier .icns
+        if let iconURL = Bundle.module.url(forResource: "icon", withExtension: "icns"),
+           let imageData = try? Data(contentsOf: iconURL),
+           let appIcon = NSImage(data: imageData) {
+            // Forcer NSImage à utiliser la plus haute résolution disponible dans le .icns
+            appIcon.size = NSSize(width: 512, height: 512)
+            return appIcon
+        }
+        
+        // Fallback : essayer le PNG
+        if let iconURL = Bundle.module.url(forResource: "menubar-icon", withExtension: "png"),
+           let imageData = try? Data(contentsOf: iconURL),
+           let appIcon = NSImage(data: imageData) {
+            return appIcon
+        }
+        
+        return nil
+    }
+    
     /// Met à jour le titre de la fenêtre pour refléter le tab sélectionné
     private func updateWindowTitle() {
         DispatchQueue.main.async {
@@ -292,7 +322,7 @@ struct PreferencesView: View {
                     .filter { $0.tag == 5555 }
                     .forEach { $0.removeFromSuperview() }
 
-                let titleField = NSTextField(labelWithString: selectedTab.rawValue)
+                let titleField = NSTextField(labelWithString: selectedTab.localizedName)
                 titleField.font = .systemFont(ofSize: 13, weight: .bold)
                 titleField.textColor = .labelColor
                 titleField.backgroundColor = .clear

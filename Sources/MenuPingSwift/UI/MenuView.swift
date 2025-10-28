@@ -14,36 +14,28 @@ import AppKit
 struct MenuView: View {
     var viewModel: AppViewModel
     @Environment(\.openWindow) private var openWindow
+    @State private var launchAtStartup = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             // Status section
-            HStack {
-                Text("Host:")
-                    .foregroundColor(.secondary)
-                Text(viewModel.settings.host)
-                    .fontWeight(.medium)
+            if let latency = viewModel.latency {
+                Text("\("menu.latency".localized()) \(String(format: "%.0f", latency)) \("menu.latency.ms".localized())")
+                    .padding(.horizontal, 12)
+            } else {
+                Text("\("menu.latency".localized()) —")
+                    .padding(.horizontal, 12)
             }
-            .padding(.horizontal, 12)
-            .padding(.top, 8)
-            
-            HStack {
-                Text("Latency:")
-                    .foregroundColor(.secondary)
-                if let latency = viewModel.latency {
-                    Text(String(format: "%.0f ms", latency))
-                        .fontWeight(.medium)
-                } else {
-                    Text("—")
-                        .fontWeight(.medium)
-                }
-            }
-            .padding(.horizontal, 12)
             
             Divider()
             
+            // Launch at startup toggle
+            Toggle("menu.launch_at_startup".localized(), isOn: $launchAtStartup)
+                .toggleStyle(.checkbox)
+                .padding(.horizontal, 12)
+            
             // Settings button
-            Button("Settings...") {
+            Button("menu.settings".localized()) {
                 openWindow(id: "settings")
                 // Activate app and bring window to front
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -60,7 +52,7 @@ struct MenuView: View {
             Divider()
             
             // Quit button
-            Button("Quit") {
+            Button("menu.quit".localized()) {
                 NSApplication.shared.terminate(nil)
             }
             .keyboardShortcut("q", modifiers: .command)
