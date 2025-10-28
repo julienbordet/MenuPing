@@ -14,7 +14,6 @@ import AppKit
 struct MenuView: View {
     var viewModel: AppViewModel
     @Environment(\.openWindow) private var openWindow
-    @State private var launchAtStartup = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -30,7 +29,10 @@ struct MenuView: View {
             Divider()
             
             // Launch at startup toggle
-            Toggle("menu.launch_at_startup".localized(), isOn: $launchAtStartup)
+            Toggle("menu.launch_at_startup".localized(), isOn: Binding(
+                get: { viewModel.isLaunchAtLoginEnabled },
+                set: { _ in viewModel.toggleLaunchAtLogin() }
+            ))
                 .toggleStyle(.checkbox)
                 .padding(.horizontal, 12)
             

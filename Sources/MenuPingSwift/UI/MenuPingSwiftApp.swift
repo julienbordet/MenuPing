@@ -42,23 +42,22 @@ struct MenuPingSwiftApp: App {
             MenuView(viewModel: viewModel)
         } label: {
             HStack(spacing: 4) {
-                // Custom icon from resources
+                // Custom icon from resources - always show
                 if let iconURL = Bundle.module.url(forResource: "menubar-icon", withExtension: "png"),
                    let iconImage = NSImage(contentsOf: iconURL) {
                     Image(nsImage: iconImage)
                         .renderingMode(.template)
-                        .opacity(viewModel.isError ? 0.5 : 1.0)
-                } else {
-                    // Fallback to SF Symbol if custom icon fails to load
-                    Image(systemName: viewModel.isError ? "wifi.exclamationmark" : "wifi")
                 }
                 
+                // Show latency number when connected, warning icon + dash when not
                 if let latency = viewModel.latency {
                     Text(String(format: "%.0f", latency))
                 } else {
+                    // No latency = error - show warning icon and dash
                     Text("—")
                 }
             }
+            .id(viewModel.latency)  // Force refresh when latency changes
         }
         
         // Settings window - macOS 15+ moderne

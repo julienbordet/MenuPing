@@ -79,7 +79,12 @@ final class ContinuousPingService {
                                     self.onLatencyUpdate?(latency)
                                 }
                             }
-                        } else if line.contains("Request timeout") || line.contains("100.0% packet loss") {
+                        } else if line.contains("Request timeout") || 
+                                  line.contains("100.0% packet loss") ||
+                                  line.contains("No route to host") ||
+                                  line.contains("Host is down") ||
+                                  line.contains("Network is unreachable") ||
+                                  line.contains("sendto: No route to host") {
                             await MainActor.run {
                                 self.onFailure?()
                             }
@@ -111,6 +116,7 @@ final class ContinuousPingService {
         
         process = nil
         currentHost = nil
+        lastUpdateTime = nil
     }
     
     /// Parse latency from a ping output line using modern Swift Regex
