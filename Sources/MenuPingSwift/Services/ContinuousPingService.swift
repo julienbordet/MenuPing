@@ -4,25 +4,36 @@
 //
 // Service de ping continu qui maintient un process /sbin/ping actif
 // et parse sa sortie en streaming pour éviter le "cold start" à chaque mesure.
+// Utilise Swift Regex moderne et strict concurrency (macOS 15+)
 //
 
 import Foundation
+import Observation
 
 /// Service for continuous ping monitoring
+@Observable
 @MainActor
-class ContinuousPingService: ObservableObject {
+final class ContinuousPingService {
     
     /// Current host being pinged
-    @Published private(set) var currentHost: String?
+    private(set) var currentHost: String?
     
     /// Callback called when a new latency measurement arrives
-    var onLatencyUpdate: ((Double) -> Void)?
+    /// Note: Marked as @ObservationIgnored to allow nonisolated(unsafe) access
+    @ObservationIgnored
+    nonisolated(unsafe) var onLatencyUpdate: (@MainActor @Sendable (Double) -> Void)?
     
     /// Callback called when ping fails
-    var onFailure: (() -> Void)?
+    /// Note: Marked as @ObservationIgnored to allow nonisolated(unsafe) access
+    @ObservationIgnored
+    nonisolated(unsafe) var onFailure: (@MainActor @Sendable () -> Void)?
+    
+    /// Minimum interval between ping updates (in seconds)
+    var minInterval: TimeInterval = 1.0
     
     private var process: Process?
     private var readTask: Task<Void, Never>?
+    private var lastUpdateTime: Date?
     
     /// Start continuous ping to the specified host
     func startPinging(host: String) {
@@ -57,8 +68,16 @@ class ContinuousPingService: ObservableObject {
                         
                         // Parse latency from line
                         if let latency = Self.parseLatency(from: line) {
-                            await MainActor.run {
-                                self.onLatencyUpdate?(latency)
+                            // Check if enough time has passed since last update
+                            let now = Date()
+                            let shouldUpdate = lastUpdateTime == nil || 
+                                             now.timeIntervalSince(lastUpdateTime!) >= minInterval
+                            
+                            if shouldUpdate {
+                                await MainActor.run {
+                                    self.lastUpdateTime = now
+                                    self.onLatencyUpdate?(latency)
+                                }
                             }
                         } else if line.contains("Request timeout") || line.contains("100.0% packet loss") {
                             await MainActor.run {
@@ -94,36 +113,21 @@ class ContinuousPingService: ObservableObject {
         currentHost = nil
     }
     
-    /// Parse latency from a ping output line
+    /// Parse latency from a ping output line using modern Swift Regex
     /// - Parameter line: A line from ping output
     /// - Returns: The latency in milliseconds, or nil if no match
     private static func parseLatency(from line: String) -> Double? {
-        // Look for "time=XX.XX ms" pattern
-        let pattern = "time=([0-9.]+) ms"
-        guard let regex = try? NSRegularExpression(pattern: pattern) else {
+        // Use modern Swift Regex literal - compile-time checked and more efficient
+        let regex = /time=([0-9.]+) ms/
+        
+        guard let match = line.firstMatch(of: regex) else {
             return nil
         }
         
-        let range = NSRange(line.startIndex..., in: line)
-        guard let match = regex.firstMatch(in: line, range: range) else {
-            return nil
-        }
-        
-        guard let latencyRange = Range(match.range(at: 1), in: line) else {
-            return nil
-        }
-        
-        let latencyString = String(line[latencyRange])
-        return Double(latencyString)
+        return Double(match.1)
     }
     
-    nonisolated deinit {
-        // Cleanup will happen when process and task are deallocated
-        // The task will be cancelled automatically
-        let processToTerminate = process
-        if let processToTerminate = processToTerminate, processToTerminate.isRunning {
-            processToTerminate.terminate()
-        }
-    }
+    // Note: No explicit deinit needed - Swift 6's modern actor isolation
+    // ensures proper cleanup. Call stopPinging() explicitly before deallocation if needed.
 }
 

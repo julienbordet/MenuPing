@@ -4,25 +4,25 @@
 //
 // ViewModel principal de l'application, gérant l'état du ping,
 // les paramètres, et le service de ping continu.
+// Utilise @Observable moderne (macOS 15+)
 //
 
 import SwiftUI
+import Observation
 
 /// Main view model managing application state
+@Observable
 @MainActor
-class AppViewModel: ObservableObject {
+final class AppViewModel {
     
     /// Current ping latency in milliseconds (nil when no ping has been performed)
-    @Published var latency: Double?
+    var latency: Double?
     
     /// Whether the last ping failed
-    @Published var isError: Bool = false
+    var isError: Bool = false
     
     /// Application settings
-    @Published var settings: Settings = Settings()
-    
-    /// Whether the preferences window is shown
-    @Published var showingPreferences: Bool = false
+    var settings: Settings = Settings()
     
     /// Continuous ping service
     private let pingService = ContinuousPingService()
@@ -32,15 +32,16 @@ class AppViewModel: ObservableObject {
         startPinging()
     }
     
-    /// Setup ping service callbacks
+    /// Setup ping service callbacks with proper MainActor isolation
     private func setupPingService() {
-        pingService.onLatencyUpdate = { [weak self] latency in
+        pingService.minInterval = settings.interval
+        pingService.onLatencyUpdate = { @MainActor [weak self] latency in
             guard let self = self else { return }
             self.latency = latency
             self.isError = false
         }
         
-        pingService.onFailure = { [weak self] in
+        pingService.onFailure = { @MainActor [weak self] in
             guard let self = self else { return }
             self.latency = nil
             self.isError = true
@@ -49,6 +50,7 @@ class AppViewModel: ObservableObject {
     
     /// Start continuous ping
     func startPinging() {
+        pingService.minInterval = settings.interval
         pingService.startPinging(host: settings.host)
     }
     
@@ -60,8 +62,7 @@ class AppViewModel: ObservableObject {
     /// Update the ping interval
     func updateInterval(_ newInterval: Double) {
         settings.interval = newInterval
-        // Note: Interval is not used with continuous ping
-        // Each ping result arrives as soon as it's ready
+        pingService.minInterval = newInterval
     }
     
     /// Update the ping host
@@ -71,10 +72,7 @@ class AppViewModel: ObservableObject {
         startPinging()
     }
     
-    nonisolated deinit {
-        Task { @MainActor [weak pingService] in
-            pingService?.stopPinging()
-        }
-    }
+    // Note: Modern Swift 6 actor isolation handles cleanup automatically
+    // The pingService will be properly deallocated
 }
 

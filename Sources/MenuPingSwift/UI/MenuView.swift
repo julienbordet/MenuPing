@@ -4,13 +4,16 @@
 //
 // Vue affichée dans le menu déroulant de la barre de menus.
 // Contient le statut du ping, un bouton de préférences, et un bouton Quitter.
+// Utilise @Observable moderne (macOS 15+)
 //
 
 import SwiftUI
+import AppKit
 
 /// View displayed in the menu bar dropdown
 struct MenuView: View {
-    @ObservedObject var viewModel: AppViewModel
+    var viewModel: AppViewModel
+    @Environment(\.openWindow) private var openWindow
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -28,7 +31,7 @@ struct MenuView: View {
                 Text("Latency:")
                     .foregroundColor(.secondary)
                 if let latency = viewModel.latency {
-                    Text(String(format: "%.1f ms", latency))
+                    Text(String(format: "%.0f ms", latency))
                         .fontWeight(.medium)
                 } else {
                     Text("—")
@@ -39,9 +42,18 @@ struct MenuView: View {
             
             Divider()
             
-            // Preferences button
-            Button("Preferences...") {
-                viewModel.showingPreferences = true
+            // Settings button
+            Button("Settings...") {
+                openWindow(id: "settings")
+                // Activate app and bring window to front
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    NSApplication.shared.activate(ignoringOtherApps: true)
+                    // Find and bring the settings window to front
+                    if let window = NSApplication.shared.windows.first(where: { $0.identifier?.rawValue == "settings" }) {
+                        window.makeKeyAndOrderFront(nil)
+                        window.orderFrontRegardless()
+                    }
+                }
             }
             .keyboardShortcut(",", modifiers: .command)
             
