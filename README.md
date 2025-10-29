@@ -5,6 +5,8 @@ Quick Menu bar tool to ping internet at regular intervals and show the response 
 
 ![](images/screenshot0.png)
 
+![](images/screenshot1.png)
+
 ## What does it do ?
 
 Very basic :
