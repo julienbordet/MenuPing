@@ -7,7 +7,6 @@ Quick Menu bar tool to ping internet at regular intervals and show the response 
 
 ![](images/screenshot1.png)
 
-Written in Python, thanks to [rumps](https://github.com/jaredks/rumps) and py2app
 
 ## What does it do ?
 
@@ -19,9 +18,19 @@ Very basic :
 ## How to install ?
 
 Have a look at binary and sources available on [the release page](https://github.com/julienbordet/MenuPing/releases/)
+* If you run macOS Sequoia or later, install v1.0.0
+* If you run an older system, install v0.4.0
 
 ## Tested on
 
+For **1.0.0** version
+
+* macOS Tahoe, Apple M1
+
+For **0.4.0** version
+
+* macOS Tahoe, Apple M1
+* macOS Sequoia, Apple M1
 * macOS Ventura, Apple M1
 * macOS Monterey, Apple x86
 * macOS Big Sur, Apple x86
