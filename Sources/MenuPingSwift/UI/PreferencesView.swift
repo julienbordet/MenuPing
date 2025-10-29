@@ -17,6 +17,12 @@ struct PreferencesView: View {
     @State private var intervalInput: String = ""
     @State private var isInitialized = false
     @State private var selectedTab: SettingsTab = .general
+    @FocusState private var focusedField: Field?
+    
+    enum Field {
+        case host
+        case interval
+    }
     
     enum SettingsTab: String, CaseIterable {
         case general
@@ -82,7 +88,7 @@ struct PreferencesView: View {
                 aboutView
             }
         }
-        .frame(width: 500)
+        .frame(width: 700)
         .fixedSize(horizontal: false, vertical: true)
         .onAppear {
             if !isInitialized {
@@ -90,10 +96,14 @@ struct PreferencesView: View {
                 intervalInput = String(format: "%.0f", viewModel.settings.interval)
                 isInitialized = true
             }
+            // Empêcher le focus automatique sur les TextFields
+            focusedField = nil
         }
         .onAppear {
             updateWindowTitle()
             resizeWindowToFitContent()
+            // Empêcher le focus automatique au niveau de la fenêtre
+            preventAutoFocus()
         }
         .onChange(of: selectedTab) { oldValue, newValue in
             // Mettre à jour le titre de la fenêtre quand on change de tab
@@ -113,15 +123,17 @@ struct PreferencesView: View {
                 HStack(alignment: .center, spacing: 12) {
                     Text("preferences.general.target_host".localized())
                         .fontWeight(.bold)
-                        .frame(width: 120, alignment: .trailing)
+                        .frame(width: 300, alignment: .trailing)
                     
                     // Column 2: Input
                     TextField("preferences.general.target_host.placeholder".localized(), text: $hostInput)
                         .textFieldStyle(.plain)
-                        .padding(6)
+                        .focused($focusedField, equals: .host)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 4)
                         .background(Color(nsColor: .quaternaryLabelColor).opacity(0.75))
                         .cornerRadius(6)
-                        .frame(width: 220)
+                        .frame(width: 150, height: 24)
                         .onChange(of: hostInput) { oldValue, newValue in
                             let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
                             if !trimmed.isEmpty && trimmed != viewModel.settings.host {
@@ -138,12 +150,14 @@ struct PreferencesView: View {
                     // Column 1: Label
                     Text("preferences.general.update_interval".localized())
                         .fontWeight(.bold)
-                        .frame(width: 120, alignment: .trailing)
+                        .frame(width: 300, alignment: .trailing)
                     
                     // Column 2: Input (petit pour 2 caractères max)
                     TextField("1", text: $intervalInput)
                         .textFieldStyle(.plain)
-                        .padding(6)
+                        .focused($focusedField, equals: .interval)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 4)
                         .background(Color(nsColor: .quaternaryLabelColor).opacity(0.75))
                         .cornerRadius(6)
                         .frame(width: 40)
@@ -159,6 +173,26 @@ struct PreferencesView: View {
                     // Column 3: Unit
                     Text("preferences.general.update_interval.unit".localized())
                         .foregroundColor(.secondary)
+                    
+                    Spacer()
+                }
+                
+                // Display Mode row
+                HStack(alignment: .center, spacing: 12) {
+                    // Column 1: Label
+                    Text("preferences.general.display_mode.show_icon".localized())
+                        .fontWeight(.bold)
+                        .frame(width: 300, alignment: .trailing)
+                    
+                    // Column 2: Checkbox
+                    Toggle(isOn: Binding(
+                        get: { viewModel.settings.showIconInMenuBar },
+                        set: { viewModel.settings.showIconInMenuBar = $0 }
+                    )) {
+                        EmptyView()
+                    }
+                    .toggleStyle(.checkbox)
+                    .help("preferences.general.display_mode.tooltip".localized())
                     
                     Spacer()
                 }
@@ -191,7 +225,7 @@ struct PreferencesView: View {
                             .frame(width: 64, height: 64)
                     }
                 }
-                .frame(width: 80, alignment: .center)
+                .frame(width: 160, alignment: .center)
                 
                 // Colonne droite : Texte
                 VStack(alignment: .leading, spacing: 8) {
@@ -357,6 +391,18 @@ struct PreferencesView: View {
                    let fittingSize = contentView.fittingSize
                    window.setContentSize(fittingSize)
                 }
+            }
+        }
+    }
+    
+    /// Empêche le focus automatique sur les TextFields lors de l'ouverture de la fenêtre
+    private func preventAutoFocus() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            if let window = NSApplication.shared.windows.first(where: { 
+                $0.identifier?.rawValue == "settings" 
+            }) {
+                // Retirer le premier responder pour empêcher le focus automatique
+                window.makeFirstResponder(nil)
             }
         }
     }
