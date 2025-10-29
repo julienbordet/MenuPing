@@ -70,7 +70,7 @@ struct MenuPingSwiftApp: App {
         }
         .windowResizability(.contentSize)
         .defaultPosition(.center)
-        .defaultSize(width: 500, height: 180)
+        .defaultSize(width: 700, height: 180)
     }
     
     /// Centre la fenêtre de settings sur l'écran principal et configure son comportement
