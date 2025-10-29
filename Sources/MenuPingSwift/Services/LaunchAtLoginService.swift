@@ -68,4 +68,3 @@ final class LaunchAtLoginService: @unchecked Sendable {
         }
     }
 }
-
